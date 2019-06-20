@@ -1,21 +1,14 @@
-require 'nokogiri'
+require 'mechanize'
 
-class XmlUrlParser < Nokogiri::XML::SAX::Document
-  attr_accessor :urls
+class XmlUrlParser
+  attr_reader :urls
 
-  def initialize
+  def initialize(xml_data)
+    @xml_data = xml_data
     @urls = []
-    @is_url = false
   end
 
-  def start_element name, attrs = []
-    @is_url = name.eql?('url')
+  def parse
+    @urls = @xml_data.search('url').map(&:text)
   end
-
-  def characters string
-    string.strip!
-    @urls.push(string) if @is_url
-  end
-
-  def end_element name; end
 end
